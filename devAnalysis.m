@@ -1,8 +1,8 @@
 clearvars
 clc
 
-reader = BioformatsImage('../data/Data for MatLab Script/Control File_20241023_CAMKIID9_MOI10_noB_10min.nd2');
-%reader = BioformatsImage('../data/Data for MatLab Script/Experimental File_20241023_CAMKIID9_MOI10_pB_10min.nd2');
+%reader = BioformatsImage('../data/Data for MatLab Script/Control File_20241023_CAMKIID9_MOI10_noB_10min.nd2');
+reader = BioformatsImage('../data/Data for MatLab Script/Experimental File_20241023_CAMKIID9_MOI10_pB_10min.nd2');
 
 outputDir = 'D:\Projects\ALMC Tickets\MirandaJuaros\Processed\20241113';
 
@@ -50,12 +50,6 @@ for iSeries = 1:reader.seriesCount
     L = watershed(dd);
     cellMask(L == 0) = false;
 
-    %%
-    Iout = showoverlay(Icell, bwperim(cellMask));
-    Iout = showoverlay(Iout, bwperim(nuclMask), 'Color', [1 1 0]);
-
-    imwrite(Iout, fullfile(outputDir, [fn, 's_', int2str(iSeries), '_mask.tiff']), 'Compression', 'none');
-
     %% Quantify red channels in green positive cells only
 
     Ired = getPlane(reader, 1, 3, 1);
@@ -66,6 +60,12 @@ for iSeries = 1:reader.seriesCount
     storeData.Intensities = cat(1, data.MeanIntensity);    
     storeData.CellMask = cellMask;
     storeData.NuclMask = nuclMask;    
+
+
+    Iout = showoverlay(Ired, bwperim(cellMask));
+    Iout = showoverlay(Iout, bwperim(nuclMask), 'Color', [1 1 0]);
+
+    imwrite(Iout, fullfile(outputDir, [fn, 's_', int2str(iSeries), '_mask.tiff']), 'Compression', 'none');
 
 end
 
